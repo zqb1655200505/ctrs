@@ -66,7 +66,7 @@ $(document).ready(function () {
     $.ajax({
        type:"post",
        url:"/ctrs/getCourseList",
-       data:{"keyWord":search_text},
+       data:{"action":"getAll","keyWord":search_text},
        success:function (data) {
            if(data!=null)
            {
@@ -78,13 +78,13 @@ $(document).ready(function () {
                    var li="";
                    li+='<li class="course-item">';
                    li+='<div class="course-title">';
-                   li+='<a href="/ctrs/course" id="'+res[i]["courseId"]+'">'
+                   li+='<a href="/ctrs/courseStudent?courseId='+res[i]["courseId"]+'">';
                    li+=res[i]["courseName"];
                    li+='</a>';
                    li+='</div>';
                    li+='<div class="course-content">';
                    li+='<div class="course-teacher">';
-                   li+='<a href="/ctrs/teacher" id="'+res[i]["userId"]+'">'
+                   li+='<a href="/ctrs/teacher" id="'+res[i]["userId"]+'">';
                    li+=res[i]["userName"];
                    li+='</a>';
                    li+='</div>';
@@ -97,6 +97,7 @@ $(document).ready(function () {
                    li+='</li>';
                    //alert(li);
                    $("#course-list").append(li);
+
                }
            }
 
@@ -112,9 +113,38 @@ function brn_search() {
     $.ajax({
         type:"post",
         url:"/ctrs/getCourseList",
-        data:{"keyWord":search_text},
+        data:{"action":"search","keyWord":search_text},
         success:function (data) {
-
+            if(data!=null)
+            {
+                var res=eval(data);
+                $('#course-list li').remove();
+                for(var i=0;i<res.length;i++)
+                {
+                    var li="";
+                    li+='<li class="course-item">';
+                    li+='<div class="course-title">';
+                    li+='<a href="/ctrs/courseStudent?courseId='+res[i]["courseId"]+'">';
+                    li+=res[i]["courseName"];
+                    li+='</a>';
+                    li+='</div>';
+                    li+='<div class="course-content">';
+                    li+='<div class="course-teacher">';
+                    li+='<a href="/ctrs/teacher" id="'+res[i]["userId"]+'">';
+                    li+=res[i]["userName"];
+                    li+='</a>';
+                    li+='</div>';
+                    li+='<div class="course-remark">';
+                    li+='<p>';
+                    li+=res[i]["remark"];
+                    li+='</p>';
+                    li+='</div>';
+                    li+='</div>';
+                    li+='</li>';
+                    //alert(li);
+                    $("#course-list").append(li);
+                }
+            }
         },
         error:function () {
             alert("请求数据出错");

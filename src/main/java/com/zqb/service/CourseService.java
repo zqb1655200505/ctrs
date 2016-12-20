@@ -5,6 +5,7 @@ import com.zqb.IDao.CourseMapper;
 import com.zqb.domain.Course;
 import com.zqb.domain.CourseInfo;
 import com.zqb.domain.User;
+import com.zqb.util.CheckParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -37,5 +38,14 @@ public class CourseService {
     public List<CourseInfo> getAllCourseInfo()
     {
         return courseInfoMapper.selectAll();
+    }
+
+    public List<CourseInfo>search(String keyWord)
+    {
+        if(!CheckParam.CheckParams(keyWord))
+        {
+            return courseInfoMapper.selectByKeyword(keyWord);
+        }
+        return null;
     }
 }

@@ -45,19 +45,21 @@
     <div class="course-list">
         <ul id="course-list">
             <%--<li class="course-item">--%>
-                <%--<div class="course-title">--%>
-                    <%--<a href="#">操作系统</a>--%>
-                <%--</div>--%>
-                <%--<div class="course-content">--%>
-                    <%--<div class="course-teacher">--%>
-                        <%--<a href="#">马锐</a>--%>
+
+                    <%--<div class="course-title">--%>
+                        <%--<a href="#">操作系统</a>--%>
                     <%--</div>--%>
-                    <%--<div class="course-remark">--%>
-                        <%--<p>操作系统（软件学院）-2016<br/>--%>
-                            <%--软件工程基础实习-2014级<br/>--%>
-                            <%--分布式系统-2013-软件工程（工学硕士）</p>--%>
+                    <%--<div class="course-content">--%>
+                        <%--<div class="course-teacher">--%>
+                            <%--<a href="#">马锐</a>--%>
+                        <%--</div>--%>
+                        <%--<div class="course-remark">--%>
+                            <%--<p>操作系统（软件学院）-2016<br/>--%>
+                                <%--软件工程基础实习-2014级<br/>--%>
+                                <%--分布式系统-2013-软件工程（工学硕士）</p>--%>
+                        <%--</div>--%>
                     <%--</div>--%>
-                <%--</div>--%>
+
             <%--</li>--%>
 
             <%--<li class="course-item">--%>

@@ -17,6 +17,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -272,7 +273,24 @@ public class CTRSController {
     @ResponseBody
     public List<CourseInfo> getCourseList()
     {
-        return courseService.getAllCourseInfo();
+        String action=request.getParameter("action");
+        if(action.equals("getAll"))
+        {
+            return courseService.getAllCourseInfo();
+        }
+        else
+        {
+            String keyword=request.getParameter("keyWord");
+            return courseService.search(keyword);
+        }
+    }
+
+    @RequestMapping("/courseStudent")
+    public ModelAndView courseStudent()
+    {
+        ModelAndView model_view = new ModelAndView();
+        System.out.println(request.getParameter("courseId"));
+        return model_view;
     }
 
 

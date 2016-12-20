@@ -1,6 +1,7 @@
 package com.zqb.IDao;
 
 import com.zqb.domain.CourseInfo;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -11,4 +12,5 @@ public interface CourseInfoMapper {
     List<CourseInfo> selectAll();
 
 
+    List<CourseInfo>selectByKeyword(@Param("keyWord") String keyWord);
 }

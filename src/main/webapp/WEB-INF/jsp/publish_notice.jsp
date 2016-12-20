@@ -43,7 +43,7 @@
             }
         </script>
         <div class="for-submit">
-            <div class="btn" onclick="confer_publish()">
+            <div class="btn1" onclick="confer_publish()">
                 <a>确认发布</a>
             </div>
         </div>

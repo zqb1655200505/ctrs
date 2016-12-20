@@ -11,4 +11,14 @@
           courseInfo
     </select>
 
+
+    <select id="selectByKeyword" resultType="CourseInfo">
+        SELECT
+          *
+        FROM
+          courseInfo
+        WHERE
+
+          course_name LIKE CONCAT('%',#{keyWord},'%')
+    </select>
 </mapper>

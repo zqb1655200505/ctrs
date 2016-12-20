@@ -23,8 +23,22 @@ body
 .for-submit
 {
     width: 100%;
-    text-align: center;
-    margin-top: 20px;
+    margin-top: 40px;
     color: white;
+    text-align: center;
+}
+.btn1
+{
+    width: 80px;
+    height:40px;
+    background: #2fa8ec;
+    border-radius: 5px;
+    padding-top: 9px;
+    margin: 0 auto;
+}
 
+.btn:hover
+{
+    cursor: hand;
+    background: #288fec;
 }
