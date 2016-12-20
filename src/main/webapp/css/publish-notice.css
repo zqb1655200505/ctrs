@@ -1,0 +1,30 @@
+body
+{
+    margin: 0 auto;
+
+}
+.container
+{
+    margin: 0 auto;
+    width: 1100px;
+    color: black;
+}
+.for-editor
+{
+    width: 95%;
+    margin: 0 auto;
+}
+.notice-title
+{
+    margin-top: 15px;
+    margin-bottom: 15px;
+    font-size: 17px;
+}
+.for-submit
+{
+    width: 100%;
+    text-align: center;
+    margin-top: 20px;
+    color: white;
+
+}

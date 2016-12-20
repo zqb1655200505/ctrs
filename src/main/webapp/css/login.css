@@ -1,0 +1,22 @@
+body
+{
+    margin:0 auto;
+    font-family: "Microsoft YaHei", sans-serif;
+    background:url("../../image/login_background.jpg");
+}
+.body-container
+{
+    width:100%;
+    margin: 0 auto;
+}
+.header-title
+{
+    width: 100%;
+    text-align: center;
+    color: #54ffea;
+    font-size: 35px;
+    background: #35afff;
+    line-height: 100px;
+    opacity: 0.8;
+    margin-top: -56px;
+}
