@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zqb.IDao.StudentCourseMapper">
+    <insert id="addStudentCourse">
+        INSERT INTO
+          student_course
+            (user_id,course_id)
+          VALUES
+            (#{userId},#{courseId})
+    </insert>
+
+    <select id="selectByPrimaryKey" parameterType="int" resultType="StudentCourse">
+        SELECT
+          *
+        FROM
+          student_course
+        WHERE
+          id=#{id}
+    </select>
+
+    <select id="selectByCourseId" resultType="StudentCourse">
+        SELECT
+          *
+        FROM
+          student_course
+        WHERE
+          course_id=#{courseId}
+    </select>
+
+    <select id="selectByUserId" resultType="StudentCourse">
+        SELECT
+          *
+        FROM
+          student_course
+        WHERE
+          user_id=#{userId}
+    </select>
+
+    <delete id="deleteStudent">
+        DELETE FROM
+          student_course
+        WHERE
+          user_id=#{userId}
+        AND
+          course_id=#{courseId}
+    </delete>
+</mapper>

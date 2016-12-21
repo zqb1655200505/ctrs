@@ -19,4 +19,7 @@ public interface UserMapper {
     int addNewUser(@Param("username") String username,
                    @Param("password") String password,
                    @Param("user_type") boolean user_type);
+
+    User getUserByname(@Param("username")String username);
+
 }

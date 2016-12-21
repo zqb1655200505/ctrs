@@ -48,4 +48,15 @@ public class CourseService {
         }
         return null;
     }
+
+    public Course selectByPrimaryKey(int courseId)
+    {
+        return courseMapper.selectByPrimaryKey(courseId);
+    }
+
+
+    public int deleteCourse(int courseId)
+    {
+        return courseMapper.deleteCourse(courseId);
+    }
 }

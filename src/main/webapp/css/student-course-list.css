@@ -1,0 +1,111 @@
+body
+{
+    margin: 0 auto;
+    font-size: 16px;
+    font-family: "Microsoft YaHei", sans-serif;
+    color: black;
+}
+.container
+{
+    margin: 0 auto;
+    width: 1000px;
+    color: black;
+}
+.header-title
+{
+    width: 100%;
+    height: 80px;
+    margin-bottom: 30px;
+}
+.list-title
+{
+    width: 15%;
+    height: 100%;
+    float: left;
+    vertical-align: middle;
+    margin-top: -5px;
+}
+.for-btns
+{
+    width: 80%;
+    height: 100%;
+    margin-left: 20%;
+    text-align: center;
+    vertical-align: middle;
+    padding-top: 25px;
+
+}
+.for-btns ul
+{
+    width: 90%;
+    height: 100%;
+    list-style:none; /* 去掉ul前面的符号 */
+    padding: 0px; /* 与内部元素的距离为0 */
+    margin: 0 auto;
+}
+.for-btns ul li
+{
+    float: left;
+    list-style-type: none;
+    width: 20%;
+}
+.btn1
+{
+    width: 100px;
+    height:40px;
+    background: #2fa8ec;
+    border-radius: 5px;
+    padding-top: 9px;
+    text-align: center;
+}
+.btn1:hover
+{
+    cursor: hand;
+    background: #288fec;
+}
+
+
+#alternatecolor
+{
+    margin: 0 auto;
+    font-size: 14px;
+}
+.altrowstable {
+    font-family: verdana,arial,sans-serif;
+    color:#333333;
+    border-width: 1px;
+    border-color: #a9c6c9;
+    border-collapse: collapse;
+}
+.altrowstable th {
+    border-width: 1px;
+    padding: 8px;
+    border-style: solid;
+    border-color: #a9c6c9;
+    width: 200px;
+    height: 45px;
+    font-family: "Microsoft YaHei", "宋体", "Segoe UI", "Lucida Grande", Helvetica, Arial, sans-serif, FreeSans, Arimo;
+}
+.altrowstable td {
+    border-width: 1px;
+    padding: 8px;
+    border-style: solid;
+    border-color: #a9c6c9;
+    width: 200px;
+    height: 45px;
+    text-align: center;
+}
+.oddrowcolor{
+    background-color:#d4e3e5;
+}
+.evenrowcolor{
+    background-color:#c3dde0;
+}
+#mask {
+    background: #575757;
+    opacity: 0.5;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+}

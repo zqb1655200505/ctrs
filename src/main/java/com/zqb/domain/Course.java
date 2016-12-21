@@ -9,12 +9,12 @@ public class Course
 
     int userId;
 
-
     String courseName;
+
 
     String remark;
 
-    String userName;
+
 
     public int getCourseId() {
         return courseId;
@@ -48,15 +48,6 @@ public class Course
         this.remark = remark;
     }
 
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-
     @Override
     public String toString() {
         return "Course{" +
@@ -64,7 +55,6 @@ public class Course
                 ", userId=" + userId +
                 ", courseName='" + courseName + '\'' +
                 ", remark='" + remark + '\'' +
-                ", userName='" + userName + '\'' +
                 '}';
     }
 }

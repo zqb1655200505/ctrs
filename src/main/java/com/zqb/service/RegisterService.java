@@ -26,10 +26,12 @@ public class RegisterService {
     public boolean registerNewUser(String username,String password)
     {
         int id=userMapper.addNewUser(username,password,false);
-        if(id>0)//注册成功返回当前用户id
+        System.out.println(id);
+        if(id>0)//注册成功
         {
             return true;
         }
         return false;
     }
+
 }

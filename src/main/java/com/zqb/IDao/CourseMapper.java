@@ -15,5 +15,7 @@ public interface CourseMapper {
                   @Param("userId")int userId,
                   @Param("remark")String remark);
 
-    Course selectByPrimaryKey(@Param("courseId") String courseId);
+    Course selectByPrimaryKey(@Param("courseId") int courseId);
+
+    int deleteCourse(@Param("courseId") int courseId);
 }

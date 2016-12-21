@@ -18,7 +18,7 @@ create table homework(homework_id int primary key auto_increment not null,
                     save_path varchar(256) not null,
                     FOREIGN KEY(user_id) references user(user_id) ON DELETE CASCADE ON UPDATE CASCADE);
                     
-create table stu_course(id int primary key auto_increment not null,
+create table student_course(id int primary key auto_increment not null,
 						course_id int not null,
                         user_id int not null,
                         FOREIGN KEY(user_id) references user(user_id) ON DELETE CASCADE ON UPDATE CASCADE,

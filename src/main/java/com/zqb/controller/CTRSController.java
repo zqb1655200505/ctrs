@@ -7,11 +7,10 @@ import javax.servlet.http.HttpSession;
 
 import com.zqb.domain.Course;
 import com.zqb.domain.CourseInfo;
+import com.zqb.domain.StudentCourse;
 import com.zqb.domain.User;
-import com.zqb.service.CourseService;
-import com.zqb.service.LoginService;
-import com.zqb.service.PublishNoticeService;
-import com.zqb.service.RegisterService;
+import com.zqb.service.*;
+import com.zqb.util.FileUpload;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,10 +20,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by zqb on 2016/12/4.
@@ -35,7 +31,6 @@ public class CTRSController {
 
    @Resource
     HttpServletRequest request;
-
 
     @Autowired
     LoginService loginService;
@@ -269,6 +264,11 @@ public class CTRSController {
     @Autowired
     CourseService courseService;
 
+    @Autowired
+    StudentCourseService studentCourseService;
+
+
+    //================================第一种返回数据给前台的方法，通过@responseBody注解
     @RequestMapping("/getCourseList")
     @ResponseBody
     public List<CourseInfo> getCourseList()
@@ -285,40 +285,234 @@ public class CTRSController {
         }
     }
 
+
+    @Autowired
+    UserService userService;
+
+    //===============================第三种返回数据给前台的方法，通过modelAndView
     @RequestMapping("/courseStudent")
     public ModelAndView courseStudent()
     {
+        HttpSession session=request.getSession();
         ModelAndView model_view = new ModelAndView();
-        System.out.println(request.getParameter("courseId"));
+        model_view.setViewName("student_course_list");
+        if(session.getAttribute("user")==null)
+        {
+            model_view.setViewName("redirect:/ctrs/login");
+            return model_view;
+        }
+        else
+        {
+            User user=(User)session.getAttribute("user");
+            if(!user.isUserType())
+            {
+                model_view.setViewName("redirect:/ctrs/index");
+                return model_view;
+            }
+        }
+        int courseId=0;
+        try {
+            courseId=Integer.parseInt(request.getParameter("courseId"));
+        }catch (Exception e)
+        {
+            return model_view;
+        }
+
+        //System.out.println(courseId);
+        //获取课程名字
+        Course course=courseService.selectByPrimaryKey(courseId);
+        model_view.addObject("courseName",course.getCourseName());
+
+        //获取该课程下所有学生
+        List<StudentCourse> stu_course = studentCourseService.selectByCourseId(courseId);
+
+        //用以保存学生名单
+        List<User> user_list=new LinkedList<User>();
+        User user=null;
+        for(int i=0;i<stu_course.size();i++)
+        {
+            int userId=stu_course.get(i).getUserId();
+
+            user=userService.selectByPrimaryKey(userId);
+            user_list.add(user);
+        }
+        model_view.addObject("userList",user_list);
         return model_view;
     }
 
 
 
+    //=================================第二种返回数据给前台的方法，通过response回写
     @RequestMapping("/addCourse")
     public void addCourse(HttpServletResponse response)
     {
         response.setCharacterEncoding("utf-8");
         String course_name=request.getParameter("course_name");
         String remark=request.getParameter("remark");
-        Map<String,Object>resultMap=new HashMap<String,Object>();
+//        Map<String,Object>resultMap=new HashMap<String,Object>();
         int res=courseService.addCourse(course_name,remark,request);
+        String resultMap="";
+        if(res>0)
+        {
+//            resultMap.put("code",200);
+//            resultMap.put("msg","添加课程成功");
+            resultMap="添加课程成功";
+        }
+        else
+        {
+//            resultMap.put("code",500);
+//            resultMap.put("msg","添加课程失败");
+            resultMap="添加课程失败";
+        }
+        try {
+            PrintWriter out=response.getWriter();
+            //System.out.println(resultMap.toString());
+            out.print(resultMap);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    @RequestMapping("/removeStudent")
+    @ResponseBody
+    public Map<String,Object> removeStudent()
+    {
+        Map<String,Object>resultMap=new HashMap<String,Object>();
+        String action=request.getParameter("action");
+        String user_id=request.getParameter("user_id");
+        String course_id=request.getParameter("course_id");
+        if(action==null||user_id==null||course_id==null)
+        {
+            resultMap.put("code",500);
+            resultMap.put("msg","参数错误");
+            return resultMap;
+        }
+        int userId=0;
+        int courseId=0;
+        try
+        {
+            userId=Integer.parseInt(user_id);
+            courseId=Integer.parseInt(course_id);
+        }
+        catch (Exception e)
+        {
+            resultMap.put("code",500);
+            resultMap.put("msg","参数错误");
+            return resultMap;
+        }
+
+        if(action.equals("remove_student_single"))//单个删除
+        {
+            int res=studentCourseService.deleteStudent(userId,courseId);
+            if(res>0)
+            {
+                resultMap.put("code",200);
+                resultMap.put("msg","删除成功");
+            }
+            else
+            {
+                resultMap.put("code",500);
+                resultMap.put("msg","删除失败");
+            }
+        }
+        else//批量删除
+        {
+
+        }
+        return resultMap;
+    }
+
+    @RequestMapping("/deleteCourse")
+    @ResponseBody
+    public Map<String,Object> deleteCourse()
+    {
+        Map<String,Object>resultMap=new HashMap<String,Object>();
+        String courseId=request.getParameter("courseId");
+        if(courseId==null)
+        {
+            resultMap.put("code",500);
+            resultMap.put("msg","参数错误");
+            return resultMap;
+        }
+        int course_id=0;
+        try
+        {
+            course_id=Integer.parseInt(courseId);
+        }catch (Exception e)
+        {
+            resultMap.put("code",500);
+            resultMap.put("msg","参数错误");
+            return resultMap;
+        }
+
+        int res=courseService.deleteCourse(course_id);
         if(res>0)
         {
             resultMap.put("code",200);
-            resultMap.put("msg","添加课程成功");
+            resultMap.put("msg","删除成功");
+        }
+        else
+        {
+            resultMap.put("code",200);
+            resultMap.put("msg","删除失败");
+        }
+        return resultMap;
+    }
+
+    @RequestMapping("/batchAddStudent")
+    @ResponseBody
+    public Map<String,Object>batchAddStudent()
+    {
+        Map<String,Object>resultMap=new HashMap<String,Object>();
+        try {
+            FileUpload.fileUpload(request);
+        } catch (IOException e) {
+            e.printStackTrace();
+            resultMap.put("code",200);
+            resultMap.put("msg","上传出错");
+        }
+        return resultMap;
+    }
+
+    @RequestMapping("/addStudent")
+    @ResponseBody
+    public Map<String,Object>addStudent()
+    {
+        Map<String,Object>resultMap=new HashMap<String,Object>();
+        String username=request.getParameter("username");
+        String courseId=request.getParameter("courseId");
+
+        System.out.println("username="+username+" courseId="+courseId);
+        if(username==null||courseId==null)
+        {
+            resultMap.put("code",500);
+            resultMap.put("msg","参数出错");
+            return resultMap;
+        }
+        int course_id=Integer.parseInt(courseId);
+        System.out.println(course_id);
+        if(registerService.registerCheck(username))//该学生还不是用户，先注册再与课程关联
+        {
+            registerService.registerNewUser(username,"123456");//默认密码123456
+        }
+
+        //注册成功,获取该用户id
+        User user=userService.getUserByname(username);
+        System.out.println(user.toString());
+        int res=studentCourseService.addStudentCourse(user.getUserId(),course_id);
+        System.out.println(res);
+        if(res>0)
+        {
+            resultMap.put("code",200);
+            resultMap.put("msg","添加成功");
+            return resultMap;
         }
         else
         {
             resultMap.put("code",500);
-            resultMap.put("msg","添加课程失败");
-        }
-        try {
-            PrintWriter out=response.getWriter();
-            System.out.println(resultMap.toString());
-            out.print(resultMap);
-        } catch (IOException e) {
-            e.printStackTrace();
+            resultMap.put("msg","添加失败");
+            return resultMap;
         }
 
     }

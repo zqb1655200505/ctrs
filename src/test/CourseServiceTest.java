@@ -24,7 +24,19 @@ public class CourseServiceTest {
     @Test
     public void getAllCourse() throws Exception {
         //System.out.println(courseMapper.selectAll().toString());
-        System.out.println(courseInfoMapper.selectAll().toString());
+        //System.out.println(courseInfoMapper.selectAll().toString());
+
+        //System.out.println(courseInfoMapper.selectByKeyword("12").toString());
     }
 
+    @Test
+    public void selectByPrimaryKey() throws Exception{
+        System.out.println(courseMapper.selectByPrimaryKey(1));
+    }
+
+    @Test
+    public void deleteCourse() throws Exception
+    {
+        System.out.println(courseMapper.deleteCourse(1));
+    }
 }
