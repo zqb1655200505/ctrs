@@ -50,7 +50,7 @@ public class FileUpload
         try {
 
             List<FileItem> list = upload.parseRequest(request);
-            if(list==null)
+            if(list==null||list.size()==0)
             {
                 resultMap.put("code",500);
                 resultMap.put("msg","数据为空");

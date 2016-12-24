@@ -14,12 +14,14 @@ $(document).ready(function () {
                 {
                     document.getElementById('publishNotice').style.display = "";
                     document.getElementById('studentManage').style.display = "";
+                    document.getElementById('learning').style.display = "none";
                     document.getElementById("username").innerHTML=res["username"];
                 }
-                else if(data=="false")
+                else if(res["msg"]=="false")
                 {
                     document.getElementById('publishNotice').style.display = "none";
                     document.getElementById('studentManage').style.display = "none";
+                    document.getElementById('learning').style.display = "";
                     document.getElementById("username").innerHTML=res["username"];
                 }
             }

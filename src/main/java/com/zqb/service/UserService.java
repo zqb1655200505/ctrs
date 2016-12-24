@@ -33,7 +33,7 @@ public class UserService {
     public Map<String,Object> batchAdd(String path)
     {
         Map<String,Object>resultMap=new HashMap<String,Object>();
-//读取刚刚上传的文件
+        //读取刚刚上传的文件
         File read_file=new File(path);
         if(!read_file.exists())
         {
@@ -52,7 +52,7 @@ public class UserService {
             {
                 try
                 {
-                    ExcelHelper.addRecordFromExcel(path);
+                    new ExcelHelper().addRecordFromExcel(path);
                 }
                 catch (Exception e)
                 {

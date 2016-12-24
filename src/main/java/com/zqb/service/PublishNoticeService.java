@@ -1,6 +1,7 @@
 package com.zqb.service;
 
 import com.zqb.IDao.NoticeMapper;
+import com.zqb.domain.Notice;
 import com.zqb.domain.User;
 import com.zqb.util.CheckParam;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,7 @@ import javax.servlet.http.HttpSession;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -70,5 +72,15 @@ public class PublishNoticeService {
             resultMap.put("msg","请使用管理员账户登录");
         }
         return resultMap;
+    }
+
+    public List<Notice>getNotice()
+    {
+        return noticeMapper.getNotice();
+    }
+
+    public Notice  selectByPrimaryKey(int noticeId)
+    {
+        return noticeMapper.selectByPrimaryKey(noticeId);
     }
 }

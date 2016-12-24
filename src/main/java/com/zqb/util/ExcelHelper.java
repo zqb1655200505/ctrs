@@ -1,11 +1,14 @@
 package com.zqb.util;
 
+import com.zqb.IDao.UserMapper;
 import com.zqb.domain.User;
+import com.zqb.service.UserService;
 import jxl.Sheet;
 import jxl.Workbook;
 import jxl.read.biff.BiffException;
 import org.apache.poi.hssf.usermodel.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -14,19 +17,30 @@ import java.util.List;
 /**
  * Created by zqb on 2016/10/17.
  */
+@Service
 public class ExcelHelper {
 
-//    @Autowired
-//    private UserMapper userMapper;
+    @Autowired
+    UserMapper userMapper;
 
-
-    public static void addRecordFromExcel(String file_path)
+    public  void addRecordFromExcel(String file_path)
     {
-        List<User>list=getAllByExcel(file_path);
-        if(list!=null)
-        {
-
-        }
+        User user=userMapper.selectByPrimaryKey(1);
+        System.out.println(user.toString());
+//        List<User>list=getAllByExcel(file_path);
+//        if(list!=null)
+//        {
+//            for(int i=0;i<list.size();i++)
+//            {
+//                String name=list.get(i).getUserName();
+//
+//                User user=userMapper.checkUser(name);
+//                if(user==null)
+//                {
+//                    userMapper.addNewUser(name,"123456",false);
+//                }
+//            }
+//        }
     }
     /**
      * 查询指定目录中电子表格中所有的数据

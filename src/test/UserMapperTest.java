@@ -21,4 +21,10 @@ public class UserMapperTest {
         System.out.print(user.toString());
     }
 
+    @Test
+    public void checkUser() throws Exception{
+        User user = userMapper.checkUser("郑泉斌");
+        if(user!=null)
+            System.out.print(user.toString());
+    }
 }

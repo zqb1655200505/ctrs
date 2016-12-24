@@ -53,6 +53,7 @@ $(document).ready(function () {
                var res=eval(data);
                //alert(res.length);
                //alert(res[0]);
+               $("#course-list li").remove();
                for(var i=0;i<res.length;i++)
                {
                    var li="";

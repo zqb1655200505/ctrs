@@ -19,4 +19,12 @@
         WHERE
             notice_id=#{noticeId}
     </select>
+
+    <select id="getNotice" resultType="Notice">
+        SELECT
+          *
+        FROM
+          notice
+
+    </select>
 </mapper>

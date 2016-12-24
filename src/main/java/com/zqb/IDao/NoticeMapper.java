@@ -3,6 +3,8 @@ package com.zqb.IDao;
 import com.zqb.domain.Notice;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+
 /**
  * Created by zqb on 2016/12/19.
  */
@@ -21,5 +23,5 @@ public interface NoticeMapper
                   @Param("content") String content,
                   @Param("publishTime") String publishTime);
 
-
+    List<Notice>getNotice();
 }

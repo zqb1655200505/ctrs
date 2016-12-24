@@ -162,7 +162,7 @@ function batch_add_student() {
         title: '批量导入学生',
         width: 450,
         zIndex:9999,
-        content: '<form id="upload"><p>从Excel导入：' +
+        content: '<form id="upload" enctype="multipart/form-data"><p>从Excel导入：' +
         '<input type="file" name="upload_file" id="import_from_excel">' +
         '</p></form>',
         okValue: '确定',
@@ -233,5 +233,37 @@ function delete_course() {
 }
 
 function upload_resource() {
-    
+    var d=dialog({
+        title: '上传课件',
+        width: 450,
+        zIndex:9999,
+        content: '<form id="upload" enctype="multipart/form-data"><p>从Excel导入：' +
+        '<input type="file" name="upload_resource" id="upload_resource">' +
+        '</p></form>',
+        okValue: '确定',
+        ok: function () {
+            var formDate = new FormData($("#upload")[0]);
+            $.ajax({
+                type:"post",
+                url:"/ctrs/uploadResource",
+                data:formDate,
+                contentType:false,//避免提交时被jQuery修改
+                processData:false,
+                success:function (data) {
+                    var res=eval(data);
+                    alert(res["msg"]);
+                },
+                error:function () {
+                    alert("请求出错");
+                }
+            });
+            $("#mask").remove();
+        },
+        cancelValue: '取消',
+        cancel: function () {
+            $("#mask").remove();
+        }
+    });
+    d.show();
+    mask();
 }

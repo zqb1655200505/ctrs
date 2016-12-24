@@ -20,10 +20,15 @@ public class PublishNoticeServiceTest {
 
     @Test
     public void publishNotice() throws Exception {
-        int res=noticeMapper.addNotice(2,"qwqw","<p>1212</p>","2016/12/19");
-        System.out.println(res);
+        //int res=noticeMapper.addNotice(2,"qwqw","<p>1212</p>","2016/12/19");
+        //System.out.println(res);
         //Notice notice=noticeMapper.selectByPrimaryKey(1);
         //System.out.println(notice.toString());
+    }
+
+    @Test
+    public void getNotice() throws Exception{
+        System.out.println(noticeMapper.getNotice().toString());
     }
 
 }

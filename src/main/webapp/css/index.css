@@ -1,0 +1,59 @@
+body
+{
+    margin: 0 auto;
+    font-family: "Microsoft YaHei", "宋体", "Segoe UI", "Lucida Grande", Helvetica, Arial, sans-serif, FreeSans, Arimo;
+}
+.body-container
+{
+    width: 1000px;
+    margin: 0 auto;
+}
+.notice-list
+{
+    width: 80%;
+    margin: 0 auto;
+}
+.notice-item
+{
+    margin: 0 auto;
+    width: 100%;
+    margin-bottom: 15px;
+    list-style-type: none;
+    background:#CCC;
+}
+.notice-item:hover
+{
+    background: #c0c2c3;
+    cursor: pointer;
+}
+.notice-logo
+{
+    width: 70px;
+    height: 70px;
+    float: left;
+    background-color: #94fff8;
+}
+.notice-logo img
+{
+    width: 70px;
+    height: 70px;
+}
+.notice-item-content
+{
+    margin-left: 70px;
+    padding-left: 10px;
+
+}
+.notice-title
+{
+    height: 35px;
+    font-family: "Microsoft YaHei", "宋体", "Segoe UI", "Lucida Grande", Helvetica, Arial, sans-serif, FreeSans, Arimo;
+    font-size: 22px;
+    font-weight: bolder;
+    color: black;
+
+}
+.notice-date
+{
+    height: 35px;
+}

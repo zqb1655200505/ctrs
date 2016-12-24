@@ -38,7 +38,7 @@
                         </a>
                     </li>
 
-                    <li class="navigation-item ib">
+                    <li class="navigation-item ib" id="learning">
                         <a href="/ctrs/courseRelate" class="navigation-link">
                             乐学
                         </a>

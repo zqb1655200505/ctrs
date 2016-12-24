@@ -5,19 +5,21 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import com.zqb.domain.Course;
-import com.zqb.domain.CourseInfo;
-import com.zqb.domain.StudentCourse;
-import com.zqb.domain.User;
+import com.zqb.domain.*;
 import com.zqb.service.*;
 import com.zqb.util.FileUpload;
+import org.apache.commons.fileupload.util.Streams;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.*;
@@ -160,7 +162,6 @@ public class CTRSController {
     @RequestMapping("/checkUserType")
     @ResponseBody
     public Map<String,Object> checkUserType()
-    //public String checkUserType()
     {
         Map<String,Object> resultMap=new HashMap<String,Object>();
         HttpSession session=request.getSession();
@@ -462,17 +463,40 @@ public class CTRSController {
 
     @RequestMapping("/batchAddStudent")
     @ResponseBody
-    public Map<String,Object>batchAddStudent()
+    public Map<String,Object>batchAddStudent(@RequestParam("upload_file") MultipartFile file)
     {
         Map<String,Object>resultMap=new HashMap<String,Object>();
-        try {
-            FileUpload.fileUpload(request);
-        } catch (IOException e) {
-            e.printStackTrace();
-            resultMap.put("code",200);
-            resultMap.put("msg","上传出错");
+        String basePath = request.getSession().getServletContext().getRealPath("/");
+        File fileLocation = new File(basePath+"upload/");
+        if(!fileLocation.exists())
+        {
+             fileLocation.mkdir();
         }
-        return resultMap;
+        if(!file.isEmpty())
+        {
+            try {
+                String fileName = file.getOriginalFilename();
+                String headPath = fileLocation +"/"+ fileName;
+                Streams.copy(file.getInputStream(),new FileOutputStream(headPath),true);
+
+                resultMap=userService.batchAdd(headPath);
+                //resultMap.put("code",200);
+                //resultMap.put("msg","上传成功");
+                return resultMap;
+            } catch (IOException e) {
+                e.printStackTrace();
+                resultMap.put("code",500);
+                resultMap.put("msg","上传出错");
+                return resultMap;
+            }
+        }
+        else
+        {
+            resultMap.put("code",500);
+            resultMap.put("msg","数据为空");
+            return resultMap;
+        }
+
     }
 
     @RequestMapping("/addStudent")
@@ -483,7 +507,7 @@ public class CTRSController {
         String username=request.getParameter("username");
         String courseId=request.getParameter("courseId");
 
-        System.out.println("username="+username+" courseId="+courseId);
+        //System.out.println("username="+username+" courseId="+courseId);
         if(username==null||courseId==null)
         {
             resultMap.put("code",500);
@@ -491,7 +515,7 @@ public class CTRSController {
             return resultMap;
         }
         int course_id=Integer.parseInt(courseId);
-        System.out.println(course_id);
+        //System.out.println(course_id);
         if(registerService.registerCheck(username))//该学生还不是用户，先注册再与课程关联
         {
             registerService.registerNewUser(username,"123456");//默认密码123456
@@ -499,9 +523,9 @@ public class CTRSController {
 
         //注册成功,获取该用户id
         User user=userService.getUserByname(username);
-        System.out.println(user.toString());
+        //System.out.println(user.toString());
         int res=studentCourseService.addStudentCourse(user.getUserId(),course_id);
-        System.out.println(res);
+        //System.out.println(res);
         if(res>0)
         {
             resultMap.put("code",200);
@@ -515,5 +539,109 @@ public class CTRSController {
             return resultMap;
         }
 
+    }
+
+    @RequestMapping("/getNotice")
+    @ResponseBody
+    public List<Notice> getNotice()
+    {
+        return publishNoticeService.getNotice();
+    }
+
+
+    @RequestMapping("/getUserName")
+    @ResponseBody
+    public Map<String,Object> getUserName()
+    {
+        Map<String,Object>resultMap=new HashMap<String,Object>();
+        String userId=request.getParameter("userId");
+        if(userId==null||userId.length()==0)
+        {
+            resultMap.put("code",500);
+            resultMap.put("msg","参数不合法");
+            return resultMap;
+        }
+        int user_id=Integer.parseInt(userId);
+        User user=userService.selectByPrimaryKey(user_id);
+        if(user!=null)
+        {
+            resultMap.put("code",200);
+            resultMap.put("msg",user.getUserName());
+            return resultMap;
+        }
+        else
+        {
+            resultMap.put("code",500);
+            resultMap.put("msg","获取用户名出错");
+            return resultMap;
+        }
+    }
+
+
+    @RequestMapping("/getNoticeInfo")
+    @ResponseBody
+    public Map<String,Object>getNoticeInfo()
+    {
+        Map<String,Object>resultMap=new HashMap<String,Object>();
+        String notice_id=request.getParameter("noticeId");
+        if(notice_id==null||notice_id.length()==0)
+        {
+            resultMap.put("code",500);
+            resultMap.put("msg","参数有误");
+            return resultMap;
+        }
+        int noticeId=Integer.parseInt(notice_id);
+        Notice notice=publishNoticeService.selectByPrimaryKey(noticeId);
+        if(notice!=null)
+        {
+            resultMap.put("code",200);
+            resultMap.put("title",notice.getTitle());
+            resultMap.put("content",notice.getContent());
+        }
+        else
+        {
+            resultMap.put("code",500);
+            resultMap.put("msg","查询结果有错");
+        }
+        return resultMap;
+    }
+
+
+    @Autowired
+    ResourceService resourceService;
+
+    @RequestMapping("/uploadResource")
+    @ResponseBody
+    public Map<String,Object>uploadResource(@RequestParam("upload_file") MultipartFile file)
+    {
+        Map<String,Object>resultMap=new HashMap<String,Object>();
+        String basePath = request.getSession().getServletContext().getRealPath("/");
+        File fileLocation = new File(basePath+"upload/resource");
+        if(!fileLocation.exists())
+        {
+            fileLocation.mkdir();
+        }
+        if(!file.isEmpty())
+        {
+            try {
+                String fileName = file.getOriginalFilename();
+                String headPath = fileLocation +"/"+ fileName;
+                Streams.copy(file.getInputStream(),new FileOutputStream(headPath),true);
+
+                resultMap=resourceService.addResource(headPath);
+                return resultMap;
+            } catch (IOException e) {
+                e.printStackTrace();
+                resultMap.put("code",500);
+                resultMap.put("msg","上传出错");
+                return resultMap;
+            }
+        }
+        else
+        {
+            resultMap.put("code",500);
+            resultMap.put("msg","数据为空");
+            return resultMap;
+        }
     }
 }
