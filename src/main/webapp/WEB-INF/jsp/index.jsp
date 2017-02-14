@@ -27,20 +27,21 @@
             <h1 style="color: black;">最新公告</h1>
         </div>
         <ul class="notice-list" id="notice_list">
-            <li class="notice-item">
-                <div class="notice-logo">
-                    <img src="<%=basePath%>/image/news_icon.png">
-                </div>
-                <div class="notice-item-content">
-                    <div class="notice-title">
-                        <a href="#">操作系统</a>
-                    </div>
-                    <div class="notice-date" style="color: black;">
-                        <span style="margin-right: 30px;">zqb</span>
-                        <span>2016/12/22</span>
-                    </div>
-                </div>
-            </li>
+            <%--模板--%>
+            <%--<li class="notice-item">--%>
+                <%--<div class="notice-logo">--%>
+                    <%--<img src="<%=basePath%>/image/news_icon.png">--%>
+                <%--</div>--%>
+                <%--<div class="notice-item-content">--%>
+                    <%--<div class="notice-title">--%>
+                        <%--<a href="#">操作系统</a>--%>
+                    <%--</div>--%>
+                    <%--<div class="notice-date" style="color: black;">--%>
+                        <%--<span style="margin-right: 30px;">zqb</span>--%>
+                        <%--<span>2016/12/22</span>--%>
+                    <%--</div>--%>
+                <%--</div>--%>
+            <%--</li>--%>
         </ul>
     </div>
 </body>

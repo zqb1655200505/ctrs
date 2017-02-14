@@ -7,7 +7,7 @@ import javax.servlet.http.HttpSession;
 
 import com.zqb.domain.*;
 import com.zqb.service.*;
-import com.zqb.util.FileUpload;
+import com.zqb.util.FileTool;
 import org.apache.commons.fileupload.util.Streams;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -18,10 +18,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.util.*;
 
 /**
@@ -463,25 +460,30 @@ public class CTRSController {
 
     @RequestMapping("/batchAddStudent")
     @ResponseBody
-    public Map<String,Object>batchAddStudent(@RequestParam("upload_file") MultipartFile file)
+    public Map<String,Object>batchAddStudent(@RequestParam("upload_file") MultipartFile file,@RequestParam("courseId") String courseId)
     {
         Map<String,Object>resultMap=new HashMap<String,Object>();
         String basePath = request.getSession().getServletContext().getRealPath("/");
-        File fileLocation = new File(basePath+"upload/");
+        //存放临时文件，导入后删除
+        File fileLocation = new File(basePath+"WEB-INF/upload/temp");
+        boolean check=true;
         if(!fileLocation.exists())
         {
-             fileLocation.mkdir();
+            check=fileLocation.mkdirs();
         }
-        if(!file.isEmpty())
+        if(check&&!file.isEmpty())
         {
             try {
                 String fileName = file.getOriginalFilename();
                 String headPath = fileLocation +"/"+ fileName;
                 Streams.copy(file.getInputStream(),new FileOutputStream(headPath),true);
-
-                resultMap=userService.batchAdd(headPath);
-                //resultMap.put("code",200);
-                //resultMap.put("msg","上传成功");
+                resultMap=userService.batchAdd(headPath,courseId);
+                //删除刚刚上传的临时文件
+                File newFile=new File(headPath);
+                if(newFile.exists())
+                {
+                    newFile.delete();
+                }
                 return resultMap;
             } catch (IOException e) {
                 e.printStackTrace();
@@ -612,36 +614,61 @@ public class CTRSController {
 
     @RequestMapping("/uploadResource")
     @ResponseBody
-    public Map<String,Object>uploadResource(@RequestParam("upload_file") MultipartFile file)
+    public Map<String,Object>uploadResource(@RequestParam("upload_resource") MultipartFile[] files,@RequestParam("courseId") String courseId)
     {
+        System.out.println(courseId);
         Map<String,Object>resultMap=new HashMap<String,Object>();
         String basePath = request.getSession().getServletContext().getRealPath("/");
-        File fileLocation = new File(basePath+"upload/resource");
+        File fileLocation = new File(basePath+"WEB-INF/upload/resource");
+        User user=(User)request.getSession().getAttribute("user");
+        boolean check=true;
         if(!fileLocation.exists())
         {
-            fileLocation.mkdir();
+            check=fileLocation.mkdirs();
         }
-        if(!file.isEmpty())
+        if(check&&files!=null&&files.length>0)
         {
-            try {
-                String fileName = file.getOriginalFilename();
-                String headPath = fileLocation +"/"+ fileName;
-                Streams.copy(file.getInputStream(),new FileOutputStream(headPath),true);
-
-                resultMap=resourceService.addResource(headPath);
-                return resultMap;
-            } catch (IOException e) {
-                e.printStackTrace();
+            StringBuffer sb=new StringBuffer();
+            boolean flag;
+            boolean flag1;
+            for(int i=0;i<files.length;i++)
+            {
+                if(files[i].getOriginalFilename().length()>0)
+                {
+                    String file_path = fileLocation +"/"+ files[i].getOriginalFilename();
+                    flag=FileTool.fileUpload(files[i],fileLocation);
+                    flag1=resourceService.addResource(file_path,Integer.parseInt(courseId),user.getUserId());
+                    if(!flag||!flag1)
+                    {
+                        sb.append("文件"+files[i].getOriginalFilename()+"上传出错\n");
+                    }
+                }
+            }
+            if(sb.toString().length()==0)
+            {
+                resultMap.put("code",200);
+                resultMap.put("msg","上传成功");
+            }
+            else
+            {
                 resultMap.put("code",500);
-                resultMap.put("msg","上传出错");
-                return resultMap;
+                resultMap.put("msg",sb.toString());
             }
         }
         else
         {
             resultMap.put("code",500);
-            resultMap.put("msg","数据为空");
-            return resultMap;
+            resultMap.put("msg","文件为空");
         }
+        return resultMap;
+    }
+
+    @RequestMapping("/downloadResource")
+    @ResponseBody
+    public void downloadResource(HttpServletResponse response) throws IOException {
+        String basePath = request.getSession().getServletContext().getRealPath("/");
+        String filePath=basePath+request.getParameter("path");
+        String isOnLine=request.getParameter("isOnline");
+        FileTool.fileDownload(filePath,isOnLine,response);
     }
 }

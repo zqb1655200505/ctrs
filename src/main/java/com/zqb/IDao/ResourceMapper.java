@@ -8,6 +8,7 @@ import org.apache.ibatis.annotations.Param;
 public interface ResourceMapper {
     int addResource(@Param("resourceType") int resourceType,
                     @Param("userId") int userId,
+                    @Param("courseId") int courseId,
                     @Param("uploadTime") String uploadTime,
                     @Param("savePath") String savePath,
                     @Param("downloadTimes") int download_times,

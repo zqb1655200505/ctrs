@@ -19,4 +19,7 @@ public interface StudentCourseMapper {
                          @Param("courseId") int courseId);
 
     int deleteStudent(@Param("userId") int userId,@Param("courseId")int courseId);
+
+    StudentCourse checkExist(@Param("userId") int userId,
+                             @Param("courseId") int courseId);
 }

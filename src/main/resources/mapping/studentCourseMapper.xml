@@ -46,4 +46,15 @@
         AND
           course_id=#{courseId}
     </delete>
+
+    <select id="checkExist" resultType="StudentCourse">
+        SELECT
+          *
+        FROM
+          student_course
+        WHERE
+          user_id=#{userId}
+        AND
+          course_id=#{courseId}
+    </select>
 </mapper>

@@ -1,15 +1,10 @@
 package com.zqb.util;
 
-import com.zqb.IDao.UserMapper;
 import com.zqb.domain.User;
-import com.zqb.service.UserService;
 import jxl.Sheet;
 import jxl.Workbook;
 import jxl.read.biff.BiffException;
 import org.apache.poi.hssf.usermodel.*;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,37 +12,16 @@ import java.util.List;
 /**
  * Created by zqb on 2016/10/17.
  */
-@Service
+
 public class ExcelHelper {
 
-    @Autowired
-    UserMapper userMapper;
 
-    public  void addRecordFromExcel(String file_path)
-    {
-        User user=userMapper.selectByPrimaryKey(1);
-        System.out.println(user.toString());
-//        List<User>list=getAllByExcel(file_path);
-//        if(list!=null)
-//        {
-//            for(int i=0;i<list.size();i++)
-//            {
-//                String name=list.get(i).getUserName();
-//
-//                User user=userMapper.checkUser(name);
-//                if(user==null)
-//                {
-//                    userMapper.addNewUser(name,"123456",false);
-//                }
-//            }
-//        }
-    }
     /**
      * 查询指定目录中电子表格中所有的数据
      * @param file_path 文件完整路径
      * @return
      */
-    private static List<User> getAllByExcel(String file_path)
+    public static List<User> getAllByExcel(String file_path)
     {
         File file=new File(file_path);
         if(!file.exists())
@@ -64,7 +38,7 @@ public class ExcelHelper {
             int rows=sheet.getRows();
             for(int i=1;i<rows;i++)
             {
-                for(int j=1;j<cols;j++)
+                for(int j=0;j<cols;j++)
                 {
                     String name=sheet.getCell(j++,i).getContents();
                     User user=new User();
@@ -95,7 +69,7 @@ public class ExcelHelper {
         HSSFCell cell = row.createCell((short) 0);
         cell.setCellValue("序号");
         cell.setCellStyle(style);
-        cell = row.createCell((short) 1);
+        cell = row.createCell((short)1);
         cell.setCellValue("姓名");
         cell.setCellStyle(style);
 

@@ -15,11 +15,11 @@ public class UserMapperTest {
 
     @Autowired
     private UserMapper userMapper;
-    @Test
-    public void selectByPrimaryKey() throws Exception {
-        User user = userMapper.selectByPrimaryKey(1);
-        System.out.print(user.toString());
-    }
+//    @Test
+//    public void selectByPrimaryKey() throws Exception {
+//        User user = userMapper.selectByPrimaryKey(1);
+//        System.out.print(user.toString());
+//    }
 
     @Test
     public void checkUser() throws Exception{

@@ -2,12 +2,12 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.zqb.IDao.NoticeMapper">
+<mapper namespace="com.zqb.IDao.ResourceMapper">
     <insert id="addResource">
         INSERT INTO
-          resource(resource_type,user_id,upload_time,save_path,download_times,remark)
+          resource(resource_type,user_id,course_id,upload_time,save_path,download_times,remark)
         VALUES
-          (#{resourceType},#{userId},#{uploadTime},#{savePath},#{downloadTimes},#{remark})
+          (#{resourceType},#{userId},#{courseId},#{uploadTime},#{savePath},#{downloadTimes},#{remark})
     </insert>
 
     <select id="selectByPrimaryKey" parameterType="int" resultType="resource">
