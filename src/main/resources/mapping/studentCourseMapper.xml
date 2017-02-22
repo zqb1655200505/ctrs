@@ -53,8 +53,19 @@
         FROM
           student_course
         WHERE
-          user_id=#{userId}
+          user_id=#{userIds}
         AND
           course_id=#{courseId}
     </select>
+
+    <delete id="batchDeleteStudent">
+        DELETE FROM
+          student_course
+        WHERE
+          course_id=#{courseId}
+        AND
+          user_id
+        IN
+          ( #{userIds})
+    </delete>
 </mapper>

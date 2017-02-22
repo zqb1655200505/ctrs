@@ -29,6 +29,7 @@ public class StudentCourseService {
 
     public int addStudentCourse(int userId,int courseId)
     {
+
         return studentCourseMapper.addStudentCourse(userId,courseId);
     }
 
@@ -36,5 +37,10 @@ public class StudentCourseService {
     public int deleteStudent(int userId,int courseId)
     {
         return studentCourseMapper.deleteStudent(userId,courseId);
+    }
+
+    public int batchDeleteStudent(int courseId,String userIds)
+    {
+        return studentCourseMapper.batchDeleteStudent(courseId,userIds);
     }
 }

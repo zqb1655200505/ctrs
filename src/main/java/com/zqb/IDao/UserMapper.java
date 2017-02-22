@@ -3,6 +3,8 @@ package com.zqb.IDao;
 import com.zqb.domain.User;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+
 public interface UserMapper {
     User selectByPrimaryKey(@Param("userId") int userId);
 
@@ -21,5 +23,7 @@ public interface UserMapper {
                    @Param("user_type") boolean user_type);
 
     User getUserByname(@Param("username")String username);
+
+    List<User> getAllStudents();
 
 }

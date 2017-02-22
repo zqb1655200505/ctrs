@@ -141,6 +141,7 @@
       <!--<artifactId>jackson-mapper-asl</artifactId>-->
       <!--<version>1.9.13</version>-->
     <!--</dependency>-->
+
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-core</artifactId>
@@ -191,6 +192,23 @@
       <artifactId>poi</artifactId>
       <version>3.16-beta1</version>
     </dependency>
+
+
+    <!-- 在线预览 -->
+    <dependency>
+      <groupId>com.artofsolving</groupId>
+      <artifactId>jodconverter</artifactId>
+      <version>2.2.1</version>
+    </dependency>
+
+
+
+    <!-- 读取word文档   还有问题(不支持高版本的office) -->
+    <!--<dependency>-->
+      <!--<groupId>org.textmining</groupId>-->
+      <!--<artifactId>tm-extractors</artifactId>-->
+      <!--<version>0.4</version>-->
+    <!--</dependency>-->
 
 
 

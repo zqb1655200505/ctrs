@@ -294,6 +294,7 @@ public class CTRSController {
         HttpSession session=request.getSession();
         ModelAndView model_view = new ModelAndView();
         model_view.setViewName("student_course_list");
+
         if(session.getAttribute("user")==null)
         {
             model_view.setViewName("redirect:/ctrs/login");
@@ -335,6 +336,16 @@ public class CTRSController {
             user_list.add(user);
         }
         model_view.addObject("userList",user_list);
+
+        //资源
+        List<com.zqb.domain.Resource> res_list=resourceService.getResourceByCourseId(courseId);
+        for(int i=0;i<res_list.size();i++)
+        {
+            //System.out.println();
+            res_list.get(i).setSavePath(res_list.get(i).getSavePath().substring(res_list.get(i).getSavePath().lastIndexOf("\\")+1));
+        }
+        model_view.addObject("resourceList",res_list);
+
         return model_view;
     }
 
@@ -378,7 +389,7 @@ public class CTRSController {
     {
         Map<String,Object>resultMap=new HashMap<String,Object>();
         String action=request.getParameter("action");
-        String user_id=request.getParameter("user_id");
+        String user_id=request.getParameter("stu_ids");
         String course_id=request.getParameter("course_id");
         if(action==null||user_id==null||course_id==null)
         {
@@ -386,22 +397,23 @@ public class CTRSController {
             resultMap.put("msg","参数错误");
             return resultMap;
         }
-        int userId=0;
-        int courseId=0;
-        try
-        {
-            userId=Integer.parseInt(user_id);
-            courseId=Integer.parseInt(course_id);
-        }
-        catch (Exception e)
-        {
-            resultMap.put("code",500);
-            resultMap.put("msg","参数错误");
-            return resultMap;
-        }
+
 
         if(action.equals("remove_student_single"))//单个删除
         {
+            int userId=0;
+            int courseId=0;
+            try
+            {
+                userId=Integer.parseInt(user_id);
+                courseId=Integer.parseInt(course_id);
+            }
+            catch (Exception e)
+            {
+                resultMap.put("code",500);
+                resultMap.put("msg","参数错误");
+                return resultMap;
+            }
             int res=studentCourseService.deleteStudent(userId,courseId);
             if(res>0)
             {
@@ -416,6 +428,28 @@ public class CTRSController {
         }
         else//批量删除
         {
+            int courseId=0;
+            courseId=Integer.parseInt(course_id);
+            List<String> stu_list=Arrays.asList(user_id.split(","));
+            //System.out.println(stu_list);
+            //System.out.println(user_id);
+            int res=0;
+            for (String stu_id:stu_list)
+            {
+                res=studentCourseService.deleteStudent(Integer.parseInt(stu_id),courseId);
+                if(res<=0)
+                {
+                    resultMap.put("code",500);
+                    resultMap.put("msg","删除学生出错");
+                }
+            }
+            if(resultMap.isEmpty())
+            {
+                resultMap.put("code",200);
+                resultMap.put("msg","成功删除学生");
+            }
+
+
 
         }
         return resultMap;
@@ -455,6 +489,18 @@ public class CTRSController {
             resultMap.put("code",200);
             resultMap.put("msg","删除失败");
         }
+        return resultMap;
+    }
+
+
+    @RequestMapping("/getAllStudent")
+    @ResponseBody
+    public Map<String,Object>getAllStudent()
+    {
+        List<User> stu_list=userService.getAllUsers();
+        Map<String,Object> resultMap=new HashMap<String,Object>();
+        resultMap.put("code",200);
+        resultMap.put("msg",stu_list);
         return resultMap;
     }
 
@@ -543,6 +589,31 @@ public class CTRSController {
 
     }
 
+    @RequestMapping("/addStudentFromExist")
+    @ResponseBody
+    public Map<String,Object>addStudentFromExist()
+    {
+        Map<String,Object>resultMap=new HashMap<String,Object>();
+        int courseId=Integer.parseInt(request.getParameter("course_id"));
+        String[] stu_ids=request.getParameter("stu_ids").split(",");
+        for(int i=0;i<stu_ids.length;i++)
+        {
+            int stu_id=Integer.parseInt( stu_ids[i]);
+            int res=studentCourseService.addStudentCourse(stu_id,courseId);
+            if(res<=0)
+            {
+                resultMap.put("code",500);
+                resultMap.put("msg","添加学生出错");
+            }
+        }
+        if(resultMap.isEmpty())
+        {
+            resultMap.put("code",200);
+            resultMap.put("msg","成功添加学生");
+        }
+        return resultMap;
+    }
+
     @RequestMapping("/getNotice")
     @ResponseBody
     public List<Notice> getNotice()
@@ -616,7 +687,7 @@ public class CTRSController {
     @ResponseBody
     public Map<String,Object>uploadResource(@RequestParam("upload_resource") MultipartFile[] files,@RequestParam("courseId") String courseId)
     {
-        System.out.println(courseId);
+        //System.out.println(courseId);
         Map<String,Object>resultMap=new HashMap<String,Object>();
         String basePath = request.getSession().getServletContext().getRealPath("/");
         File fileLocation = new File(basePath+"WEB-INF/upload/resource");
@@ -635,7 +706,7 @@ public class CTRSController {
             {
                 if(files[i].getOriginalFilename().length()>0)
                 {
-                    String file_path = fileLocation +"/"+ files[i].getOriginalFilename();
+                    String file_path = fileLocation +"\\"+ files[i].getOriginalFilename();
                     flag=FileTool.fileUpload(files[i],fileLocation);
                     flag1=resourceService.addResource(file_path,Integer.parseInt(courseId),user.getUserId());
                     if(!flag||!flag1)
@@ -666,9 +737,69 @@ public class CTRSController {
     @RequestMapping("/downloadResource")
     @ResponseBody
     public void downloadResource(HttpServletResponse response) throws IOException {
-        String basePath = request.getSession().getServletContext().getRealPath("/");
-        String filePath=basePath+request.getParameter("path");
-        String isOnLine=request.getParameter("isOnline");
-        FileTool.fileDownload(filePath,isOnLine,response);
+        String type=request.getParameter("type");
+        if(type.equals("sample"))//下载excel模板
+        {
+            String basePath = request.getSession().getServletContext().getRealPath("/");
+            String filePath=basePath+request.getParameter("path");
+            FileTool.fileDownload(filePath,response);
+        }
+        else//下载资源
+        {
+            int res_id=Integer.parseInt(request.getParameter("resId"));
+            com.zqb.domain.Resource res=resourceService.selectByPrimaryKey(res_id);
+            if(res!=null)
+            {
+                FileTool.fileDownload(res.getSavePath(),response);
+                resourceService.updateDownload(res_id);
+            }
+        }
+
+    }
+    @RequestMapping("/onlineRead")
+    @ResponseBody
+    public void onlineRead(HttpServletResponse response) throws Exception {
+//================读取word
+//       BufferedInputStream bis = null;
+//       URL url = null;
+//       FileURLConnection httpUrl = null; // 建立链接
+//       url = new URL("file:///"+res.getSavePath());
+//       httpUrl = (FileURLConnection) url.openConnection();// 连接指定的资源
+//       httpUrl.connect();// 获取网络输入流
+//       bis = new BufferedInputStream(httpUrl.getInputStream());
+//       String bodyText = null;
+//       WordExtractor ex = new WordExtractor();
+//       try {
+//           bodyText = ex.extractText(bis);
+//       } catch (Exception e) {
+//           e.printStackTrace();
+//       }
+//================读取word
+        int res_id=Integer.parseInt(request.getParameter("resId"));
+        com.zqb.domain.Resource res=resourceService.selectByPrimaryKey(res_id);
+        if(res!=null)
+        {
+            FileTool.fileOnlineRead(res.getSavePath(),response,res.getResourceType());
+        }
+    }
+
+    @RequestMapping("/removeResource")
+    @ResponseBody
+    public Map<String,Object> removeResource()
+    {
+        Map<String,Object>resultMap=new HashMap<String,Object>();
+        int resId=Integer.parseInt(request.getParameter("resId"));
+        int res=resourceService.removeResource(resId);
+        if(res>0)
+        {
+            resultMap.put("code",200);
+            resultMap.put("msg","成功移除");
+        }
+        else
+        {
+            resultMap.put("code",500);
+            resultMap.put("msg","移除文件失败");
+        }
+        return resultMap;
     }
 }

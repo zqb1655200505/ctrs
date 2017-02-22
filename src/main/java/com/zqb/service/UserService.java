@@ -105,4 +105,9 @@ public class UserService {
         return userMapper.getUserByname(name);
     }
 
+
+    public List<User> getAllUsers()
+    {
+        return userMapper.getAllStudents();
+    }
 }

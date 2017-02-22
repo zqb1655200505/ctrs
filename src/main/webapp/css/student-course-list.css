@@ -27,11 +27,11 @@ body
     text-align: center;
     font-weight: bold;
     font-size: 20px;
-    margin-left: 20%;
+    margin-left: 10%;
 }
 .for-btns
 {
-    width: 80%;
+    width: 90%;
     height: 100%;
     margin-left: 11%;
     text-align: center;
@@ -41,7 +41,7 @@ body
 }
 .for-btns ul
 {
-    width: 90%;
+    width: 100%;
     height: 100%;
     list-style:none; /* 去掉ul前面的符号 */
     padding: 0px; /* 与内部元素的距离为0 */
@@ -51,11 +51,11 @@ body
 {
     float: left;
     list-style-type: none;
-    width: 20%;
+    width: 15%;
 }
 .btn1
 {
-    width: 100px;
+    width: 120px;
     height:40px;
     background: #2fa8ec;
     border-radius: 5px;

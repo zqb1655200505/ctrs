@@ -81,5 +81,10 @@
     <orderEntry type="library" name="Maven: net.sourceforge.jexcelapi:jxl:2.6.10" level="project" />
     <orderEntry type="library" name="Maven: org.apache.poi:poi:3.16-beta1" level="project" />
     <orderEntry type="library" name="Maven: org.apache.commons:commons-collections4:4.1" level="project" />
+    <orderEntry type="library" name="Maven: com.artofsolving:jodconverter:2.2.1" level="project" />
+    <orderEntry type="library" name="Maven: org.openoffice:juh:2.3.0" level="project" />
+    <orderEntry type="library" name="Maven: org.openoffice:jurt:2.3.0" level="project" />
+    <orderEntry type="library" name="Maven: org.openoffice:ridl:2.3.0" level="project" />
+    <orderEntry type="library" name="Maven: org.openoffice:unoil:2.3.0" level="project" />
   </component>
 </module>

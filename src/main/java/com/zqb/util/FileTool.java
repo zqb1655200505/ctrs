@@ -1,10 +1,9 @@
 package com.zqb.util;
 
+import com.zqb.service.ResourceService;
 import org.apache.commons.fileupload.util.Streams;
 import java.io.*;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
@@ -30,8 +29,9 @@ public class FileTool
         return true;
     }
 
-    public static void fileDownload(String filePath,String isOnLine,HttpServletResponse response)throws IOException
+    public static void fileDownload(String filePath,HttpServletResponse response)throws IOException
     {
+
         File f = new File(filePath);
         if (!f.exists())
         {
@@ -41,23 +41,63 @@ public class FileTool
         byte[] buf = new byte[1024];
         int len = 0;
         response.reset(); // 非常重要
-        // 在线打开方式
-        if (isOnLine.equals("true"))
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType("multipart/form-data");
+        response.setHeader("Content-Disposition", "attachment; filename=" + new String(f.getName().replaceAll(" ", "").getBytes("utf-8"),"iso8859-1"));
+        response.setHeader("Content-Length",f.length()+"");
+        BufferedOutputStream out=new BufferedOutputStream(response.getOutputStream());
+        while ((len = br.read(buf)) > 0)
         {
-            URL u = new URL("file:///" + filePath);
-            response.setContentType(u.openConnection().getContentType());
-            response.setHeader("Content-Disposition", "inline; filename=" + new String(f.getName().replaceAll(" ", "").getBytes("utf-8"),"iso8859-1"));
-            // 文件名应该编码成UTF-8
-            response.setCharacterEncoding("UTF-8");
+            out.write(buf, 0, len);
         }
-        // 纯下载方式
-        else
+        br.close();
+        out.close();
+        out.flush();
+
+    }
+
+    public static void fileOnlineRead(String path,HttpServletResponse response,int fileType) throws Exception {
+        File f = new File(path);
+        if (!f.exists())
         {
-            response.setCharacterEncoding("UTF-8");
-            response.setContentType("multipart/form-data");
-            response.setHeader("Content-Disposition", "attachment; filename=" + new String(f.getName().replaceAll(" ", "").getBytes("utf-8"),"iso8859-1"));
-            response.setHeader("Content-Length",f.length()+"");
+            response.sendError(404, "File not found!");
+            return;
         }
+        if(fileType==2||fileType==5||fileType==6)//浏览器本身支持在线打开的格式，无需转码（图片，pdf,html,txt）
+        {
+            onlineRead(response,path);
+        }
+        else//浏览器不支持在线打开的文件格式，要转码(word,ppt,excel)
+        {
+            if(path.endsWith(".docx")||path.endsWith(".xlsx"))//不支持转码的文件类型，改为下载
+            {
+                fileDownload(path,response);
+                return;
+            }
+            String res=OfficeConvert.officeToPDF(path);//支持转码的，转为pdf在线预览
+            if(res.equals("文件转换出错")||res.equals("文档不存在"))
+            {
+                response.sendError(500, res);
+                return;
+            }
+            else
+            {
+                onlineRead(response,res);
+            }
+        }
+    }
+
+    private static void onlineRead(HttpServletResponse response,String path) throws IOException {
+        File f = new File(path);
+        BufferedInputStream br = new BufferedInputStream(new FileInputStream(f));
+        byte[] buf = new byte[1024];
+        int len = 0;
+        response.reset(); // 非常重要
+        URL u = new URL("file:///" + path);
+        response.setContentType(u.openConnection().getContentType());
+        response.setHeader("Content-Disposition", "inline; filename=" + new String(f.getName().replaceAll(" ", "").getBytes("utf-8"),"iso8859-1"));
+        // 文件名应该编码成UTF-8
+        response.setCharacterEncoding("UTF-8");
         BufferedOutputStream out=new BufferedOutputStream(response.getOutputStream());
         while ((len = br.read(buf)) > 0)
         {
@@ -70,6 +110,7 @@ public class FileTool
 
     public static boolean fileDelete(String path)
     {
+
         boolean flag = false;
         File file = new File(path);
         // 判断目录或文件是否存在

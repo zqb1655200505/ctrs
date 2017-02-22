@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.util.List;
+
 /**
  * Created by zqb on 2016/12/9.
  */
@@ -26,5 +28,12 @@ public class UserMapperTest {
         User user = userMapper.checkUser("郑泉斌");
         if(user!=null)
             System.out.print(user.toString());
+    }
+
+    @Test
+    public void getAllStudents()
+    {
+        List<User> list=userMapper.getAllStudents();
+        System.out.println(list);
     }
 }

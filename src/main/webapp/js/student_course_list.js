@@ -84,7 +84,7 @@ function remove_student(obj) {
         $.ajax({
             type:"post",
             url:"/ctrs/removeStudent",
-            data:{"action":"remove_student_single","user_id":id,"course_id":course_id},
+            data:{"action":"remove_student_single","stu_ids":id,"course_id":course_id},
             success:function (data) {
                 if(data!=null)
                 {
@@ -109,17 +109,22 @@ function batch_remove_student()
     if(confirm("移除所有选中学生？"))
     {
         var ids=getCheckd("check_box");
+        var courseId=GetQueryString("courseId");
         for(var i=0;i<ids.length;i++)
         {
             ids[i]=ids[i].substr(9);
         }
-        var courseId=GetQueryString("courseId");
+        //alert(ids);
+        ids=ids.toString();
         $.ajax({
             type:"post",
             url:"/ctrs/removeStudent",
-            data:{"action":"remove_student_batch","user_id":ids,"courseId":courseId},
+            data:{"action":"remove_student_batch","stu_ids":ids,"course_id":course_id},
             success:function (data) {
 
+                var res=eval(data);
+                alert(res["msg"]);
+                window.location.reload();
             },
             error:function () {
                 alert("请求数据出错");
@@ -129,6 +134,100 @@ function batch_remove_student()
 
 }
 
+//封装判断数组是否包含指定元素
+Array.prototype.contains = function ( needle ) {
+    for (i in this) {
+        if (this[i] == needle) return true;
+    }
+    return false;
+};
+//从页面中获取当前课程所有已有学生
+function getCurrentStudentList(objName){
+    var obj = document.getElementsByName(objName);
+    var check_val = new Array(obj.length);
+    for(var i=0;i<obj.length;i++)
+    {
+        check_val[i]=obj[i].id;
+    }
+    return check_val;
+}
+//从已有学生列表导入
+function import_student() {
+    var list="";
+    var cur_list=getCurrentStudentList("check_box");
+
+    for(var i=0;i<cur_list.length;i++)
+    {
+        cur_list[i]=cur_list[i].substr(9);
+    }
+    $.ajax({
+        type:"post",
+        url:"/ctrs/getAllStudent",
+        success:function (data) {
+            var res=eval(data);
+            var stu_list=res["msg"];
+            for(var i=0;i<stu_list.length;i++)
+            {
+                var item=eval(stu_list[i]);
+                if(cur_list.contains(item["userId"]))
+                {
+                    continue;
+                }
+                list+='<li>';
+                list+='<input name="stu_list_check" style="list-style-type: none;" type="checkbox" id="student'+item["userId"]+'">';
+                list+='<label for="student'+item["userId"]+'">'+item["userName"]+'</label>';
+                list+='</li>';
+            }
+            //alert(list);
+            var d=dialog({
+                title: '添加学生',
+                width: 450,
+                zIndex:9999,
+                content: '<div><ul style="list-style: none;font-size: 18px;" id="student_list">'+list+'</ul></div>',
+                okValue: '确定',
+                ok: function () {
+                    var ids=getCheckd("stu_list_check");
+                    for(var i=0;i<ids.length;i++)
+                    {
+                        ids[i]=ids[i].substr(7);
+                    }
+                    var stu_ids=ids.toString();
+                    if(stu_ids.length>0)
+                    {
+                        $.ajax({
+                            type:"post" ,
+                            url:"/ctrs/addStudentFromExist",
+                            data:{"stu_ids":stu_ids,"course_id":course_id},
+                            success:function (data) {
+                                var res=eval(data);
+                                alert(res["msg"]);
+                                window.location.reload();
+                            },
+                            error:function () {
+                                alert("请求数据出错");
+                            }
+                        });
+                    }
+                    else
+                    {
+                        alert("请先选择学生");
+                    }
+                    $("#mask").remove();
+                },
+                cancelValue: '取消',
+                cancel: function () {
+                    $("#mask").remove();
+                }
+            });
+            d.show();
+            mask();
+        },
+        error:function () {
+            alert("请求数据出错");
+        }
+    });
+
+}
 function batch_download_resource() {
     if(confirm("确定下载选中资源？"))
     {
@@ -139,6 +238,8 @@ function batch_download_resource() {
         }
     }
 }
+
+
 //获取选中的checkbox
 function getCheckd(objName){
     var obj = document.getElementsByName(objName);
@@ -272,17 +373,9 @@ function downloadSample() {
     form.attr("target","");
     form.attr("method","post");
     form.attr("action","/ctrs/downloadResource");
-
     //通过input标签的name属性和value属性来传递参数
-    var input1=$("<input>");
-    input1.attr("type","hidden");
-    input1.attr("name","path");
-    input1.attr("value","WEB-INF/res/excel/StudentSample.xlsx");
-    var input2=$("<input>");
-    input2.attr("type","hidden");
-    input2.attr("name","isOnline");
-    input2.attr("value","true");
-
+    var input1=newInput("path","WEB-INF/res/excel/StudentSample.xls");
+    var input2=newInput("type","sample");
     $("body").append(form);//将表单放置在web中
     form.append(input1);
     form.append(input2);
@@ -353,6 +446,7 @@ function upload_resource() {
                 success:function (data) {
                     var res=eval(data);
                     alert(res["msg"]);
+                    window.location.reload();
                 },
                 error:function () {
                     alert("请求出错");
@@ -374,5 +468,90 @@ function add_file() {
 
 function download_resource(res_id)
 {
-    alert(res_id);
+    res_id=res_id.substr(11);
+    var form=$("<form>");//定义一个form表单
+    form.attr("style","display:none");
+    form.attr("target","");
+    form.attr("method","post");
+    form.attr("action","/ctrs/downloadResource");
+    //通过input标签的name属性和value属性来传递参数
+    var input1=newInput("resId",res_id);
+    var input2=newInput("type","resource");
+    $("body").append(form);//将表单放置在web中
+    form.append(input1);
+    form.append(input2);
+    form.submit();//表单提交
+    //window.location.reload();
+    $("#time"+res_id).text(Number($("#time"+res_id).text())+1);
+}
+
+function remove_resource(obj)
+{
+    obj=obj.substr(9);
+    var d=dialog({
+        title: '操作确认',
+        width: 450,
+        zIndex:9999,
+        content: '<p>确认移除该资源文件？</p>',
+        okValue: '确定',
+        ok: function () {
+            $.ajax({
+                type:"post",
+                url:"/ctrs/removeResource",
+                data:{"resId":obj},
+                success:function (data) {
+                    if(data!=null)
+                    {
+                        var res=eval(data);
+                        alert(res["msg"]);
+                        window.location.reload();
+                        $("#li-res-title").click();
+                    }
+                    else
+                    {
+                        alert("删除出错");
+                    }
+                },
+                error:function () {
+                    alert("请求数据出错");
+                }
+            });
+            $("#mask").remove();
+        },
+        cancelValue: '取消',
+        cancel: function () {
+            $("#mask").remove();
+        }
+    });
+    d.show();
+    mask();
+}
+
+function online_pre_read(objName,objId) {
+    objName=objName.substr(4);
+    if(objName==3)//不支持zip文件预览
+    {
+        alert("暂不支持改格式文件预览");
+        return;
+    }
+    objId=objId.substr(9);
+    var form=$("<form>");//定义一个form表单
+    form.attr("style","display:none");
+    form.attr("target","_blank");
+    form.attr("method","post");
+    form.attr("action","/ctrs/onlineRead");
+    //通过input标签的name属性和value属性来传递参数
+    var input1=newInput("resId",objId);
+    $("body").append(form);//将表单放置在web中
+    form.append(input1);
+    form.submit();//表单提交
+
+}
+
+function newInput(name,value) {
+    var input=$("<input>");
+    input.attr("type","hidden");
+    input.attr("name",name);
+    input.attr("value",value);
+    return input;
 }

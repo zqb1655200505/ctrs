@@ -10,7 +10,7 @@
           (#{resourceType},#{userId},#{courseId},#{uploadTime},#{savePath},#{downloadTimes},#{remark})
     </insert>
 
-    <select id="selectByPrimaryKey" parameterType="int" resultType="resource">
+    <select id="selectByPrimaryKey" parameterType="int" resultType="Resource">
         SELECT
           *
         FROM
@@ -19,10 +19,35 @@
           resource_id=#{resourceId}
     </select>
 
-    <select id="getAllResource" resultType="resource">
+    <select id="getAllResource" resultType="Resource">
         SELECT
           *
         FROM
           resource
     </select>
+
+    <select id="getResourceByCourseId" resultType="Resource">
+        SELECT
+          *
+        FROM
+          resource
+        WHERE
+          course_id=#{courseId}
+    </select>
+
+    <delete id="removeResource">
+        DELETE FROM
+          resource
+        WHERE
+          resource_id=#{resId}
+    </delete>
+
+    <update id="updateDownload">
+        UPDATE
+          resource
+        SET
+          download_times=download_times+1
+        WHERE
+          resource_id=#{resId}
+    </update>
 </mapper>

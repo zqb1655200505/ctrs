@@ -21,19 +21,26 @@ public class StudentCourseServiceTest {
     public void addStudentCourse() throws  Exception{
         System.out.println(studentCourseService.addStudentCourse(1,15));
     }
-//    @Test
-//    public void selectByCourseId() throws Exception {
-//        System.out.println(studentCourseService.selectByCourseId(1).toString());
-//    }
-//
-//    @Test
-//    public void selectByUserId() throws Exception {
-//        System.out.println(studentCourseService.selectByUserId(1).toString());
-//    }
+    @Test
+    public void selectByCourseId() throws Exception {
+        System.out.println(studentCourseService.selectByCourseId(1).toString());
+    }
 
-//    @Test
-//    public void deleteStudent (int userId,int courseId)
-//    {
-//        studentCourseService.deleteStudent(userId,courseId);
-//    }
+    @Test
+    public void selectByUserId() throws Exception {
+        System.out.println(studentCourseService.selectByUserId(1).toString());
+    }
+
+    @Test
+    public void deleteStudent (int userId,int courseId)
+    {
+        studentCourseService.deleteStudent(userId,courseId);
+    }
+
+    @Test
+    public void batchDeleteStudent()
+    {
+        int res=studentCourseService.batchDeleteStudent(2,"2");
+        System.out.println(res);
+    }
 }

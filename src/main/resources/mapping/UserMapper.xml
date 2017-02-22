@@ -48,4 +48,13 @@
         WHERE
           user_name=#{username}
     </select>
+
+    <select id="getAllStudents" resultType="User">
+        SELECT
+          user_id,user_name
+        FROM
+          user
+        WHERE
+          user_type=FALSE ;
+    </select>
 </mapper>

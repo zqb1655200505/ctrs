@@ -22,4 +22,6 @@ public interface StudentCourseMapper {
 
     StudentCourse checkExist(@Param("userId") int userId,
                              @Param("courseId") int courseId);
+    int batchDeleteStudent(@Param("courseId") int courseId,
+                           @Param("userIds") String userIds);
 }
